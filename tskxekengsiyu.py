@@ -14,8 +14,8 @@ tskxekengsiyu = commands.Bot(command_prefix="!")  # Initialize client bot
 versionnumber="0.0.1"
 timezone=timedelta(hours=-8)
 modRoleNames = ["Eyktan","Olo'eyktan"]
-# activeRoles = {"Ketuwong":64,"Zìma'uyu":128,"Hapxìtu":256,"Numeyu":512,"Taronyunay":1024,"Taronyu":2048,"Tsamsiyunay":4096,"Tsamsiyu":8192}
-activeRoleNames = ["Tsamsiyu","Tsamsiyunay","Taronyu","Taronyunay","Numeyu","Hapxìtu","Zìma'uyu","Ketuwong"]
+# activeRoles = {"Ketuwong":64,"ZÃ¬ma'uyu":128,"HapxÃ¬tu":256,"Numeyu":512,"Taronyunay":1024,"Taronyu":2048,"Tsamsiyunay":4096,"Tsamsiyu":8192}
+activeRoleNames = ["Tsamsiyu","Tsamsiyunay","Taronyu","Taronyunay","Numeyu","HapxÃ¬tu","ZÃ¬ma'uyu","Ketuwong"]
 activeRoleThresholds = [8192, 4096, 2048, 1024, 512, 256, 128, 64]
 
 @tskxekengsiyu.event
@@ -38,7 +38,7 @@ async def on_message():
     
     ## Assigns correct role to currentRole if mod.
     if isMod:
-        for role in activeRoleNames:
+        for role in userRoles:
             if role not in ["everyone", "Eyktan", "Olo'eyktan"]:
                 currentRole = role
 
@@ -78,7 +78,7 @@ async def time(ctx):
 ## Prints a list of all roles by category.
 @tskxekengsiyu.command()
 async def rolelist(ctx):
-    trainingRoleNames = ["Ketuwong","Zìma'uyu","Hapxìtu","Taronyunay","Taronyu","Tsamsiyunay","Tsamsiyu"]
+    trainingRoleNames = ["Ketuwong","ZÃ¬ma'uyu","HapxÃ¬tu","Taronyunay","Taronyu","Tsamsiyunay","Tsamsiyu"]
     modRoleNames = ["Eyktan","Olo'eyktan"]
     trainingRoles = []
     modRoles = []

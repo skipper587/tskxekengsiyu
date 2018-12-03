@@ -53,6 +53,8 @@ async def on_message():
         if userMessageCount >= activeRoleThresholds[i] and currentRole != role:
             remove_roles(author, currentRole)
             add_roles(author, activeRoleNames[i])
+            # Debug line
+            print('Updated roles for ' author'.')
             # Can end here if triggers.
             break
         i += 1

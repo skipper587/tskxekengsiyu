@@ -11,8 +11,8 @@ import time
 Tskxekengsiyu = discord.Client()  # Initialise Client
 tskxekengsiyu = commands.Bot(command_prefix="!")  # Initialize client bot
 
-versionnumber="0.0.1"
-timezone=timedelta(hours=-8)
+versionnumber = "0.0.1"
+timezone = timedelta(hours=-8)
 modRoleNames = ["Eyktan","Olo'eyktan"]
 # activeRoles = {"Ketuwong":64,"Zìma'uyu":128,"Hapxìtu":256,"Numeyu":512,"Taronyunay":1024,"Taronyu":2048,"Tsamsiyunay":4096,"Tsamsiyu":8192}
 activeRoleNames = ["Koaktu","Tsamsiyu","Tsamsiyunay","Taronyu","Taronyunay","Numeyu","Hapxìtu","Zìma'uyu","Ketuwong"]
@@ -43,6 +43,9 @@ async def on_message():
                 currentRole = role
 
     ## Functions for reading/writing our file
+    
+    ## Temp code for hard-coding testing
+    userMessageCount = 256
 
     ## Updates roles if applicable.
     i = 0

@@ -53,7 +53,6 @@ async def on_message():
             # Can end here if triggers.
             break
         i += 1
-             
 
 ## Quit command
 @tskxekengsiyu.command(name='ftangnga')

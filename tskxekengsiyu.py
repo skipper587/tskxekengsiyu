@@ -3,81 +3,93 @@ import discord
 
 from discord.ext.commands import Bot
 from discord.ext import commands
-from datetime import timedelta
 
 import asyncio
-import time
 
 Tskxekengsiyu = discord.Client()  # Initialise Client
 tskxekengsiyu = commands.Bot(command_prefix="!")  # Initialize client bot
 
-versionnumber = "0.0.1"
-timezone = timedelta(hours=-8)
+versionnumber = "0.0.2"
 modRoleNames = ["Eyktan","Olo'eyktan"]
-# activeRoles = {"Ketuwong":64,"Zìma'uyu":128,"Hapxìtu":256,"Numeyu":512,"Taronyunay":1024,"Taronyu":2048,"Tsamsiyunay":4096,"Tsamsiyu":8192}
 activeRoleNames = ["Koaktu","Tsamsiyu","Tsamsiyunay","Taronyu","Taronyunay","Numeyu","Hapxìtu","Zìma'uyu","Ketuwong"]
 activeRoleThresholds = [16384, 8192, 4096, 2048, 1024, 512, 256, 128, 64]
 
 @tskxekengsiyu.event
 async def on_ready():
-    # This will be called when the bot connects to the server
-    print("Tskxekengsiyu alaksi lu.")
+        # This will be called when the bot connects to the server
+        print("Tskxekengsiyu alaksi lu.")
 
 @tskxekengsiyu.event
-async def on_message():
-    author = ctx.message.author
-    currentRole = ctx.author.top_role.name
-    userRoles = ctx.author.roles
-    isMod = False
-    userMesssageCount = 0
-    
-    ## Check if author.top_role is moderator.
-    for role in modRoleNames:
-        if role == currentRole:
-            isMod = True
-    
-    ## Assigns correct role to currentRole if mod.
-    if isMod:
-        for role in userRoles:
-            if role not in ["@everyone", "Eyktan", "Olo'eyktan"]:
-                currentRole = role
+async def on_message(message):
+        if message.guild:
+                if message.guild.id == 516003512316854287 and message.author.id != 519188181426503718:
+                        user = message.author
+                        currentRole = user.top_role
+                        userRoles = user.roles
+                        activeRoles = message.guild.roles
+                        isMod = False
+                        userMessageCount = 512 # Don't forget to remove this hard-code.
 
-    ## Functions for reading/writing our file
+                        ## Check if author.top_role is moderator.
+                        if currentRole.name in modRoleNames:
+                                isMod = True
     
-    ## Temp code for hard-coding testing
-    userMessageCount = 256
+                        ## Assigns correct role to currentRole if mod.
+                        if isMod:
+                                for role in userRoles:
+                                        if role.name not in modRoleNames:
+                                                currentRole = role
 
-    ## Updates roles if applicable.
-    i = 0
-    for role in activeRoleNames:
-        if userMessageCount >= activeRoleThresholds[i] and currentRole != role:
-            remove_roles(author, currentRole)
-            add_roles(author, activeRoleNames[i])
-            # Debug line
-            print('Updated roles for ' author'.')
-            # Can end here if triggers.
-            break
-        i += 1
-
+                        ## Functions for reading/writing the file
+        
+                        ## Updates roles.
+                        i = 0
+                        for roles in activeRoleNames:
+                                if userMessageCount >= activeRoleThresholds[i] and currentRole.name != roles:
+                                        # For users with no roles.
+                                        if currentRole.name == "@everyone":
+                                                for role in activeRoles:
+                                                        if role.name == activeRoleNames[i]:
+                                                                await user.add_roles(role)
+                                                                print('Added ' + role.name + ' to ' + user.display_name + '.')
+                                                                await message.author.send('**Seykxel sì nitram!** Set lu ngaru txintìnit alu ' + role.name + '.')
+                                                                # print('Lu hasey.')
+                                                                break
+                                        else:
+                                                # For everyone else.
+                                                await user.remove_roles(currentRole)
+                                                for role in activeRoles:
+                                                        if role.name == activeRoleNames[i]:
+                                                                await user.add_roles(role)
+                                                                print('Added ' + role.name + ' to ' + user.display_name + '.')
+                                                                await message.author.send('**Seykxel sì nitram!** Set lu ngaru txintìnit alu ' + role.name + '.')
+                                                                # print('Lu hasey.')
+                                                                break
+                                elif userMessageCount >= activeRoleThresholds[i]:
+                                        print('Lu hasey.')
+                                        break
+                                i += 1
+        else:
+                # If a user DMs the bot.
+                await message.author.dm_channel.send('Ftang nga! Ke nerìn \'upxaret ngeyä fìtsengmì!')
+        
+        await tskxekengsiyu.process_commands(message)
+        
 ## Quit command
-@tskxekengsiyu.command(name='ftangnga')
+@tskxekengsiyu.command(name='ftang')
 async def botquit(ctx):
-    await ctx.send("Herum.")
-    await tseayu.close()
-    await Tseayu.close()
-    quit()
+        user = ctx.message.author
+        if user.top_role.name == "Olo'eyktan":
+                await ctx.send("Herum. Hayalovay!")
+                await tskxekengsiyu.close()
+                await Tskxekengsiyu.close()
+                quit()
 
 ## Version
 @tskxekengsiyu.command()
 async def version(ctx):
-    displayversion=["Version: ", versionnumber]
-    await ctx.send(''.join(displayversion))
-
-## Timestamp Test
-@tskxekengsiyu.command()
-async def time(ctx):
-    shift=ctx.message.created_at+timezone
-    await ctx.send("Date is %s PST" % shift.strftime("%Y-%m-%d %H:%M:%S"))
+        displayversion=["Version: ", versionnumber]
+        await ctx.send(''.join(displayversion))
 
 # Replace token with your bots token
-tskxekengsiyu.run("NTE5MTg4MTgxNDI2NTAzNzE4.Dubrug.QmdWE-cquRlkwk1BuEMGMiPKpfY")
+tskxekengsiyu.run("hidden bot token")

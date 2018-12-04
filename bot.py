@@ -10,10 +10,33 @@ import os
 Tskxekengsiyu = discord.Client()  # Initialise Client
 tskxekengsiyu = commands.Bot(command_prefix="!")  # Initialize client bot
 
-versionnumber = "1.0.4"
+versionnumber = "1.0.5.1"
 modRoleNames = ["Eyktan","Olo'eyktan"]
 activeRoleNames = ["Koaktu","Tsamsiyu","Tsamsiyunay","Taronyu","Taronyunay","Numeyu","Hapxìtu","Zìma'uyu","Ketuwong"]
 activeRoleThresholds = [16384, 8192, 4096, 2048, 1024, 512, 256, 128, 64]
+
+async def roleUpdate(count, check):
+        ## Updates roles.
+        i = 0
+        for roles in activeRoleNames:
+                if count >= activeRoleThresholds[i] and check.name != roles:
+                        # For everyone else.
+                        for role in activeRoles:
+                                if role.name == activeRoleNames[i]:
+                                        await user.add_roles(role)
+                                        print('Added ' + role.name + ' to ' + user.display_name + '.')
+                                        if message.author.dm_channel is None:
+                                                await message.author.create_dm()
+                                        await message.author.send('**Seykxel sì nitram!** Set lu ngaru txintìnit alu ' + role.name + '.')
+                                        if check.name != "@everyone":
+                                                await user.remove_roles(check)
+                                                print('Removed ' + check + ' from ' + user.display_name + '.')
+                                        # print('Lu hasey.')
+                                        break
+                elif count >= activeRoleThresholds[i]:
+                        # print('Lu hasey.')
+                        break
+                i += 1
 
 @tskxekengsiyu.event
 async def on_ready():
@@ -30,7 +53,8 @@ async def on_message(message):
                         activeRoles = message.guild.roles
                         isMod = False
                         userMessageCount = 0
-                        fileName = 'users/' + str(user.id) + '.tsk'
+                        fileName = 'users/' + str(user.id) + '.tsk' # Linux path
+                        # fileName = 'users\\' + str(user.id) + '.tsk' # Windows path
                         
                         ## Check if author.top_role is moderator.
                         if currentRole.name in modRoleNames:
@@ -42,23 +66,13 @@ async def on_message(message):
                                         if role.name not in modRoleNames:
                                                 currentRole = role
 
-                        ## Functions for reading/writing the file
-                        if not os.path.exists(fileName):
-                              fh = open(fileName, 'w')
-                              fh.write(str(userMessageCount + 1))
-                              fh.close()
-                        else:
-                                fh = open(fileName, "r")
-                                strMessageCount = fh.read()
-                                userMessageCount = int(strMessageCount)
-                                # print(user.name + ' has ' + strMessageCount + ' messages.')
-                                fh.close()
-                                fh = open(fileName, "w")
-                                fh.write(str(userMessageCount + 1))
-                                fh.close()
-                                # fh = open(fileName, "r")
-                                # print(fh.read())
-                                # fh.close()
+                        ## Updates the user profile
+                        fh = open(fileName, "w+")
+                        fh.write(str(userMessageCount + 1)\n)
+                        fh.write(user.name)
+                        fh.close()
+
+                        # roleUpdate(userMessageCount, currentRole) # Future function for the below code.
         
                         ## Updates roles.
                         i = 0
@@ -104,6 +118,17 @@ async def botquit(ctx):
 async def version(ctx):
         displayversion=["Version: ", versionnumber]
         await ctx.send(''.join(displayversion))
+
+## User message count
+@tskxekengsiyu.command(name='lie')
+async def messages(ctx, user: discord.Member):
+        fileName = 'users/' + str(user.id) + '.tsk' # Linux path
+        # fileName = 'users\\' + str(user.id) + '.tsk' # Windows path
+        fh = open(fileName, "r")
+        messageCount = fh.readlines(1)
+        userName = fh.readlines(2)
+        fh.close()
+        await ctx.send('Lu tsatuteru ' + messageCount + ' upxare.')
 
 # Replace token with your bots token
 tskxekengsiyu.run("NTE5MTg4MTgxNDI2NTAzNzE4.DuhCZQ.TwZGq5zzmW4yetu6MGYqBYyOdjs")

@@ -10,7 +10,7 @@ import os
 Tskxekengsiyu = discord.Client()  # Initialise Client
 tskxekengsiyu = commands.Bot(command_prefix="!")  # Initialize client bot
 
-versionnumber = "0.0.2"
+versionnumber = "1.0.0"
 modRoleNames = ["Eyktan","Olo'eyktan"]
 activeRoleNames = ["Koaktu","Tsamsiyu","Tsamsiyunay","Taronyu","Taronyunay","Numeyu","Hapxìtu","Zìma'uyu","Ketuwong"]
 activeRoleThresholds = [16384, 8192, 4096, 2048, 1024, 512, 256, 128, 64]
@@ -46,46 +46,38 @@ async def on_message(message):
                         ## Functions for reading/writing the file
                         if not os.path.exists(fileName):
                               fh = open(fileName, 'w')
-                              fh.write(str(userMessageCount))
+                              fh.write(str(userMessageCount + 1))
                               fh.close()
                         else:
                                 fh = open(fileName, "r")
                                 strMessageCount = fh.read()
                                 userMessageCount = int(strMessageCount)
-                                print(user + ' has ' + userMessageCount + ' messages.')
+                                # print(user.name + ' has ' + strMessageCount + ' messages.')
                                 fh.close()
                                 fh = open(fileName, "w")
                                 fh.write(str(userMessageCount + 1))
                                 fh.close()
-                                fh = open(fileName, "r")
-                                print(fh.read())
-                                fh.close()
+                                # fh = open(fileName, "r")
+                                # print(fh.read())
+                                # fh.close()
         
                         ## Updates roles.
                         i = 0
                         for roles in activeRoleNames:
                                 if userMessageCount >= activeRoleThresholds[i] and currentRole.name != roles:
-                                        # For users with no roles.
-                                        if currentRole.name == "@everyone":
-                                                for role in activeRoles:
-                                                        if role.name == activeRoleNames[i]:
-                                                                await user.add_roles(role)
-                                                                print('Added ' + role.name + ' to ' + user.display_name + '.')
-                                                                await message.author.send('**Seykxel sì nitram!** Set lu ngaru txintìnit alu ' + role.name + '.')
-                                                                # print('Lu hasey.')
-                                                                break
-                                        else:
-                                                # For everyone else.
-                                                await user.remove_roles(currentRole)
-                                                for role in activeRoles:
-                                                        if role.name == activeRoleNames[i]:
-                                                                await user.add_roles(role)
-                                                                print('Added ' + role.name + ' to ' + user.display_name + '.')
-                                                                await message.author.send('**Seykxel sì nitram!** Set lu ngaru txintìnit alu ' + role.name + '.')
-                                                                # print('Lu hasey.')
-                                                                break
+                                        # For everyone else.
+                                        for role in activeRoles:
+                                                if role.name == activeRoleNames[i]:
+                                                        await user.add_roles(role)
+                                                        print('Added ' + role.name + ' to ' + user.display_name + '.')
+                                                        await message.author.send('**Seykxel sì nitram!** Set lu ngaru txintìnit alu ' + role.name + '.')
+                                                        if currentRole.name != "@everyone":
+                                                                await user.remove_roles(currentRole)
+                                                                print('Removed ' + currentRole + ' from ' + user.display_name + '.')
+                                                        # print('Lu hasey.')
+                                                        break
                                 elif userMessageCount >= activeRoleThresholds[i]:
-                                        print('Lu hasey.')
+                                        # print('Lu hasey.')
                                         break
                                 i += 1
         else:

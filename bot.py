@@ -10,7 +10,7 @@ import os
 Tskxekengsiyu = discord.Client()  # Initialise Client
 tskxekengsiyu = commands.Bot(command_prefix="!")  # Initialize client bot
 
-versionnumber = "1.0.3"
+versionnumber = "1.0.4"
 modRoleNames = ["Eyktan","Olo'eyktan"]
 activeRoleNames = ["Koaktu","Tsamsiyu","Tsamsiyunay","Taronyu","Taronyunay","Numeyu","Hapxìtu","Zìma'uyu","Ketuwong"]
 activeRoleThresholds = [16384, 8192, 4096, 2048, 1024, 512, 256, 128, 64]
@@ -30,7 +30,7 @@ async def on_message(message):
                         activeRoles = message.guild.roles
                         isMod = False
                         userMessageCount = 0
-                        fileName = 'users\\' + str(user.id) + '.tsk'
+                        fileName = 'users/' + str(user.id) + '.tsk'
                         
                         ## Check if author.top_role is moderator.
                         if currentRole.name in modRoleNames:

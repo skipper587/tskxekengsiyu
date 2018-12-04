@@ -5,6 +5,7 @@ from discord.ext.commands import Bot
 from discord.ext import commands
 
 import asyncio
+import os
 
 Tskxekengsiyu = discord.Client()  # Initialise Client
 tskxekengsiyu = commands.Bot(command_prefix="!")  # Initialize client bot
@@ -13,6 +14,7 @@ versionnumber = "0.0.2"
 modRoleNames = ["Eyktan","Olo'eyktan"]
 activeRoleNames = ["Koaktu","Tsamsiyu","Tsamsiyunay","Taronyu","Taronyunay","Numeyu","Hapxìtu","Zìma'uyu","Ketuwong"]
 activeRoleThresholds = [16384, 8192, 4096, 2048, 1024, 512, 256, 128, 64]
+# localDir = os.getcwd()
 
 @tskxekengsiyu.event
 async def on_ready():
@@ -28,8 +30,9 @@ async def on_message(message):
                         userRoles = user.roles
                         activeRoles = message.guild.roles
                         isMod = False
-                        userMessageCount = 512 # Don't forget to remove this hard-code.
-
+                        userMessageCount = 0
+                        fileName = str(user.id) + '.tsk'
+                        
                         ## Check if author.top_role is moderator.
                         if currentRole.name in modRoleNames:
                                 isMod = True
@@ -41,6 +44,22 @@ async def on_message(message):
                                                 currentRole = role
 
                         ## Functions for reading/writing the file
+                        if not os.path.exists(fileName):
+                              fh = open(fileName, 'w')
+                              fh.write(str(userMessageCount))
+                              fh.close()
+                        else:
+                                fh = open(fileName, "r")
+                                strMessageCount = fh.read()
+                                userMessageCount = int(strMessageCount)
+                                print(user + ' has ' + userMessageCount + ' messages.')
+                                fh.close()
+                                fh = open(fileName, "w")
+                                fh.write(str(userMessageCount + 1))
+                                fh.close()
+                                fh = open(fileName, "r")
+                                print(fh.read())
+                                fh.close()
         
                         ## Updates roles.
                         i = 0
@@ -92,4 +111,4 @@ async def version(ctx):
         await ctx.send(''.join(displayversion))
 
 # Replace token with your bots token
-tskxekengsiyu.run("hidden bot token")
+tskxekengsiyu.run("NTE5MTg4MTgxNDI2NTAzNzE4.DuhCZQ.TwZGq5zzmW4yetu6MGYqBYyOdjs")

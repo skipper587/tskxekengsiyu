@@ -10,11 +10,10 @@ import os
 Tskxekengsiyu = discord.Client()  # Initialise Client
 tskxekengsiyu = commands.Bot(command_prefix="!")  # Initialize client bot
 
-versionnumber = "1.0.2"
+versionnumber = "1.0.3"
 modRoleNames = ["Eyktan","Olo'eyktan"]
 activeRoleNames = ["Koaktu","Tsamsiyu","Tsamsiyunay","Taronyu","Taronyunay","Numeyu","Hapxìtu","Zìma'uyu","Ketuwong"]
 activeRoleThresholds = [16384, 8192, 4096, 2048, 1024, 512, 256, 128, 64]
-# localDir = os.getcwd()
 
 @tskxekengsiyu.event
 async def on_ready():
@@ -31,7 +30,7 @@ async def on_message(message):
                         activeRoles = message.guild.roles
                         isMod = False
                         userMessageCount = 0
-                        fileName = 'users/' + str(user.id) + '.tsk'
+                        fileName = 'users\\' + str(user.id) + '.tsk'
                         
                         ## Check if author.top_role is moderator.
                         if currentRole.name in modRoleNames:
@@ -70,6 +69,8 @@ async def on_message(message):
                                                 if role.name == activeRoleNames[i]:
                                                         await user.add_roles(role)
                                                         print('Added ' + role.name + ' to ' + user.display_name + '.')
+                                                        if message.author.dm_channel is None:
+                                                                await message.author.create_dm()
                                                         await message.author.send('**Seykxel sì nitram!** Set lu ngaru txintìnit alu ' + role.name + '.')
                                                         if currentRole.name != "@everyone":
                                                                 await user.remove_roles(currentRole)
@@ -82,6 +83,8 @@ async def on_message(message):
                                 i += 1
         else:
                 # If a user DMs the bot.
+                if message.author.dm_channel is None:
+                        await message.author.create_dm()
                 await message.author.dm_channel.send('Ftang nga! Ke nerìn \'upxaret ngeyä fìtsengmì!')
         
         await tskxekengsiyu.process_commands(message)

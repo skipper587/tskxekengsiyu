@@ -10,17 +10,16 @@ import os
 Tskxekengsiyu = discord.Client()  # Initialise Client
 tskxekengsiyu = commands.Bot(command_prefix="!")  # Initialize client bot
 
-versionnumber = "1.0.5.1"
-modRoleNames = ["Eyktan","Olo'eyktan"]
-activeRoleNames = ["Koaktu","Tsamsiyu","Tsamsiyunay","Taronyu","Taronyunay","Numeyu","Hapxìtu","Zìma'uyu","Ketuwong"]
-activeRoleThresholds = [16384, 8192, 4096, 2048, 1024, 512, 256, 128, 64]
+versionnumber = "1.0.5.2"
+modRoleNames = ["Olo'eyktan","Eyktan","frapo"]
+activeRoleNames = ["Koaktu","Tsamsiyu","Tsamsiyutsyìp","Eykyu","Ikran Maktoyu","Taronyu","Taronyutsyìp","Numeyu","Hapxìtu","Zìma'uyu","Ketuwong"]
+activeRoleThresholds = [16384, 8192, 4096, 2048, 1024, 512, 256, 128, 64, 32, 16]
 
 async def roleUpdate(count, check):
         ## Updates roles.
         i = 0
         for roles in activeRoleNames:
                 if count >= activeRoleThresholds[i] and check.name != roles:
-                        # For everyone else.
                         for role in activeRoles:
                                 if role.name == activeRoleNames[i]:
                                         await user.add_roles(role)
@@ -44,8 +43,15 @@ async def on_ready():
         print("Tskxekengsiyu alaksi lu.")
 
 @tskxekengsiyu.event
+async def on_member_join(member):
+        # This will automatically give anyone the 'frapo' role when they join the server.
+        await member.add_roles("frapo")
+
+@tskxekengsiyu.event
 async def on_message(message):
+        # If message is in-server
         if message.guild:
+                # If message is in guild and isn't from the bot.
                 if message.guild.id == 516003512316854287 and message.author.id != 519188181426503718:
                         user = message.author
                         currentRole = user.top_role
@@ -120,7 +126,7 @@ async def version(ctx):
         await ctx.send(''.join(displayversion))
 
 ## User message count
-@tskxekengsiyu.command(name='lie')
+@tskxekengsiyu.command(name='yì')
 async def messages(ctx, user: discord.Member):
         fileName = 'users/' + str(user.id) + '.tsk' # Linux path
         # fileName = 'users\\' + str(user.id) + '.tsk' # Windows path
@@ -128,7 +134,13 @@ async def messages(ctx, user: discord.Member):
         messageCount = fh.readlines(1)
         userName = fh.readlines(2)
         fh.close()
-        await ctx.send('Lu tsatuteru ' + messageCount + ' upxare.')
+        for i in activeRoleThresholds:
+                if int(messageCount) > activeRoleThresholds[i]:
+                        toNextLevel = activeRoleThresholds[i - 1] - int(messageCount)
+                        break
+                break
+        await ctx.send("Lu tsatuteru " + messageCount + " 'upxare.")
+        await ctx.send("Lu " +toNextLevel + " 'upxare haya yìvay.")
 
 # Replace token with your bots token
 tskxekengsiyu.run("NTE5MTg4MTgxNDI2NTAzNzE4.DuhCZQ.TwZGq5zzmW4yetu6MGYqBYyOdjs")

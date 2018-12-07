@@ -11,7 +11,7 @@ import os
 Tskxekengsiyu = discord.Client()  # Initialise Client
 tskxekengsiyu = commands.Bot(command_prefix="!")  # Initialize client bot
 
-versionnumber = "1.0.7.1"
+versionnumber = "1.0.8.1"
 modRoleNames = ["Olo'eyktan","Eyktan","frapo"]
 activeRoleNames = ["Koaktu","Tsamsiyu","Tsamsiyutsyìp","Eykyu","Ikran Makto","Taronyu","Taronyutsyìp","Numeyu","Hapxìtu","Zìma'uyu","Ketuwong"]
 activeRoleThresholds = [16384, 8192, 4096, 2048, 1024, 512, 256, 128, 64, 32, 16]
@@ -56,34 +56,34 @@ def reverse(s):
         return reverse(s[1:]) + s[0] 
 
 def wordify(input):
-    rev = reverse(input)
-    output = ""
-    if len(input) == 1:
-        if input == "0":
-            return "kew"
-    for i, d in enumerate(rev):
-        if i == 0:  # 7777[7]
-            output = naviVocab[1][int(d)] + output
-            if int(d) == 1 and rev[1] != '0':
-                output = naviVocab[4][1] + output
-        elif i == 1:  # 777[7]7
-            if int((d)) > 0:
-                output = naviVocab[2][int(d)] + naviVocab[3][1] + output
-        elif i == 2:  # 77[7]77
-            if int(d) > 0:
-                output = naviVocab[2][int(d)] + naviVocab[3][2] + output
-        elif i == 3:  # 7[7]777
-            if int(d) > 0:
-                output = naviVocab[2][int(d)] + naviVocab[3][3] + output
-        elif i == 4:  # [7]7777
-            if int(d) > 0:
-                output = naviVocab[2][int(d)] + naviVocab[3][4] + output
-    for i in ["01", "02", "03", "04", "05", "06", "07"]:
-        if rev[0:2] == d:
-            output = output + naviVocab[4][1]
-    output = output.replace("mm", "m")
-    output += "a"
-    return output
+        rev = reverse(input)
+        output = ""
+        if len(input) == 1:
+                if input == "0":
+                    return "kewa"
+        for i, d in enumerate(rev):
+                if i == 0:  # 7777[7]
+                        output = naviVocab[1][int(d)] + output
+                        if int(d) == 1 and rev[1] != '0':
+                                output = naviVocab[4][1] + output
+                elif i == 1:  # 777[7]7
+                        if int((d)) > 0:
+                                output = naviVocab[2][int(d)] + naviVocab[3][1] + output
+                elif i == 2:  # 77[7]77
+                        if int(d) > 0:
+                                output = naviVocab[2][int(d)] + naviVocab[3][2] + output
+                elif i == 3:  # 7[7]777
+                        if int(d) > 0:
+                                output = naviVocab[2][int(d)] + naviVocab[3][3] + output
+                elif i == 4:  # [7]7777
+                        if int(d) > 0:
+                                output = naviVocab[2][int(d)] + naviVocab[3][4] + output
+        for d in ["01", "02", "03", "04", "05", "06", "07"]:
+                if rev[0:2] == d:
+                        output = output + naviVocab[4][1]
+                output = output.replace("mm", "m")
+                output += "a"
+                return output
 
 @tskxekengsiyu.event
 async def on_ready():
@@ -104,50 +104,45 @@ async def on_member_join(member):
 @tskxekengsiyu.event
 async def on_message(message):
         # If message is in-server
-        if message.guild and not message.content.startswith("!"):
-                # If message is in guild and isn't from the bot.
-                if message.guild.id == 516003512316854287 and message.author.id != 519188181426503718:
-                        user = message.author
-                        currentRole = user.top_role
-                        userRoles = user.roles
-                        isMod = False
-                        userMessageCount = 0
-                        fileName = 'users/' + str(user.id) + '.tsk' # Linux path
-                        # fileName = 'users\\' + str(user.id) + '.tsk' # Windows path
-                        
-                        ## Check if author.top_role is moderator.
-                        if currentRole.name in modRoleNames:
-                                isMod = True
-    
-                        ## Assigns correct role to currentRole if mod.
-                        if isMod:
-                                for role in userRoles:
-                                        if role.name not in modRoleNames:
-                                                currentRole = role
+        if message.guild:
+                if not message.content.startswith("!"):
+                        # If message is in guild and isn't from the bot.
+                        if len(message.content) >= 5 and message.author.id != 519188181426503718:
+                                user = message.author
+                                currentRole = user.top_role
+                                userRoles = user.roles
+                                isMod = False
+                                userMessageCount = 0
+                                fileName = 'users/' + str(user.id) + '.tsk'
+                                
+                                ## Check if author.top_role is moderator.
+                                if currentRole.name in modRoleNames:
+                                        isMod = True
+            
+                                ## Assigns correct role to currentRole if mod.
+                                if isMod:
+                                        for role in userRoles:
+                                                if role.name not in modRoleNames:
+                                                        currentRole = role
 
-                        ## Updates the user profile.
-                        if not os.path.exists(fileName):
-                              fh = open(fileName, 'w')
-                              fh.write(str(userMessageCount + 1) + "\n")
-                              fh.write(user.name)
-                              fh.close()
-                        else:
-                                fh = open(fileName, "r")
-                                strMessageCount = fh.readlines(1)
-                                # print(strMessageCount[0])
-                                userMessageCount = int(strMessageCount[0])
-                                # print(user.name + ' has ' + strMessageCount[0] + ' messages.')
-                                fh.close()
-                                fh = open(fileName, "w")
-                                fh.write(str(userMessageCount + 1) + "\n")
-                                fh.write(user.name)
-                                fh.close()
+                                ## Updates the user profile.
+                                if not os.path.exists(fileName):
+                                      fh = open(fileName, 'w')
+                                      fh.write(str(userMessageCount + 1) + "\n")
+                                      fh.write(user.name)
+                                      fh.close()
+                                else:
+                                        fh = open(fileName, "r")
+                                        strMessageCount = fh.readlines(1)
+                                        userMessageCount = int(strMessageCount[0])
+                                        fh.close()
+                                        fh = open(fileName, "w")
+                                        fh.write(str(userMessageCount + 1) + "\n")
+                                        fh.write(user.name)
+                                        fh.close()
 
-                        await roleUpdate(userMessageCount, currentRole, message, user) # Future function for the below code.
-
-        elif message.guild:
-                pass
-        
+                                await roleUpdate(userMessageCount, currentRole, message, user)
+                                
         elif message.author.id != 519188181426503718:
                 # If a user DMs the bot.
                 if message.author.dm_channel is None:
@@ -167,16 +162,15 @@ async def botquit(ctx):
                 quit()
 
 ## Version
-@tskxekengsiyu.command()
+@tskxekengsiyu.command(name='srey')
 async def version(ctx):
-        displayversion=["Version: ", versionnumber]
+        displayversion=["Srey: ", versionnumber]
         await ctx.send(''.join(displayversion))
 
 ## User message count
 @tskxekengsiyu.command(name='yì')
 async def messages(ctx, user: discord.Member):
-        fileName = 'users/' + str(user.id) + '.tsk' # Linux path
-        # fileName = 'users\\' + str(user.id) + '.tsk' # Windows path
+        fileName = 'users/' + str(user.id) + '.tsk'
         fh = open(fileName, "r")
         fileContents = fh.readlines(1)
         strippedContents = fileContents[0].strip("\n")
@@ -199,7 +193,7 @@ async def messages(ctx, user: discord.Member):
 @messages.error
 async def info_error(ctx, error):
         if isinstance(error, commands.CommandError):
-                await ctx.send("Tswìma' futa tstxori tuteyä pamrel si.")
+                await ctx.send("Srake ngal tswìma' tstxoti?")
 
 # Replace token with your bots token
 tskxekengsiyu.run("NTE5MTg4MTgxNDI2NTAzNzE4.DuhCZQ.TwZGq5zzmW4yetu6MGYqBYyOdjs")

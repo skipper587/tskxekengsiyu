@@ -11,7 +11,7 @@ import os
 Tskxekengsiyu = discord.Client()  # Initialise Client
 tskxekengsiyu = commands.Bot(command_prefix="!")  # Initialize client bot
 
-versionnumber = "1.0.7"
+versionnumber = "1.0.7.1"
 modRoleNames = ["Olo'eyktan","Eyktan","frapo"]
 activeRoleNames = ["Koaktu","Tsamsiyu","Tsamsiyutsyìp","Eykyu","Ikran Makto","Taronyu","Taronyutsyìp","Numeyu","Hapxìtu","Zìma'uyu","Ketuwong"]
 activeRoleThresholds = [16384, 8192, 4096, 2048, 1024, 512, 256, 128, 64, 32, 16]
@@ -97,6 +97,9 @@ async def on_member_join(member):
         newRole = get(member.guild.roles, name="frapo")
         await member.add_roles(newRole)
         print("Tìmìng tuteru alu " + member.name + " txintìnit alu " + newRole.name + ".")
+        if member.dm_channel is None:
+                await member.create_dm()
+        await member.send("Zola'u nìprrte' ne **Olo' Tskengwiä**! Inan säomumit mì tsyänel alu #säomum rutxe. Lu awngaru tintìn a layu ngaru tengkrr pängkxo nga fìtsengmì, ha plltxe nìNa'vi ko!")
 
 @tskxekengsiyu.event
 async def on_message(message):

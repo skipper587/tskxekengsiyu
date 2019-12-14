@@ -7,11 +7,12 @@ from discord.utils import get
 
 import asyncio
 import os
+import datetime
 
 Tskxekengsiyu = discord.Client()  # Initialise Client
 tskxekengsiyu = commands.Bot(command_prefix="!")  # Initialize client bot
 
-versionnumber = "1.0.8.1"
+versionnumber = "1.1"
 modRoleNames = ["Olo'eyktan","Eyktan","frapo"]
 activeRoleNames = ["Koaktu","Tsamsiyu","Tsamsiyutsyìp","Eykyu","Ikran Makto","Taronyu","Taronyutsyìp","Numeyu","Hapxìtu","Zìma'uyu","Ketuwong"]
 activeRoleThresholds = [16384, 8192, 4096, 2048, 1024, 512, 256, 128, 64, 32, 16]
@@ -102,7 +103,7 @@ async def on_member_join(member):
         await member.send("Zola'u nìprrte' ne **Olo' Tskengwiä**! Inan säomumit mì tsyänel alu #säomum rutxe. Lu awngaru tintìn a layu ngaru tengkrr pängkxo nga fìtsengmì, ha plltxe nìNa'vi ko!")
 
 @tskxekengsiyu.event
-async def on_message(message):
+async def on_message(message):    
         # If message is in-server
         if message.guild:
                 if not message.content.startswith("!"):
@@ -151,6 +152,20 @@ async def on_message(message):
        
         await tskxekengsiyu.process_commands(message)
         
+@tskxekengsiyu.event
+async def on_message(message):
+        # Post a question of the day, if theres one available.
+        dateTimeObj = datetime.now()
+        timestampStr = dateTimeObj.strftime("%d-%m-%Y")
+        fileName = 'qotd/' + timestampStr + '.tsk'
+        
+        if os.path.exists(fileName):
+                fh = open(fileName, 'r')
+                content = fh.readlines(1)
+                fh.close()
+                await ctx.send(content)
+                fh.remove(fileName)
+        
 ## Quit command
 @tskxekengsiyu.command(name='ftang')
 async def botquit(ctx):
@@ -164,7 +179,7 @@ async def botquit(ctx):
 ## Version
 @tskxekengsiyu.command(name='srey')
 async def version(ctx):
-        displayversion=["Srey: ", versionnumber]
+        displayversion = ["Srey: ", versionnumber]
         await ctx.send(''.join(displayversion))
 
 ## User message count
@@ -190,10 +205,22 @@ async def messages(ctx, user: discord.Member):
         embed.set_thumbnail(url=user.avatar_url)
         await ctx.send(embed=embed)
 
+## Add QOTD
+@tskxekengsiyu.command(name='ngop tìpawmit')
+async def qotd(ctx, question, date):
+        if os.path.exists(fileName):
+                await ctx.send("Fìtìpawm mi fkeytok!")
+        else:
+                fileName = 'qotd/' + str(date) + '.tsk'
+                fh = open(fileName, "w")
+                fh.write(str(question))
+                fh.close()
+                await ctx.send("Lu hasey.")
+
 @messages.error
 async def info_error(ctx, error):
         if isinstance(error, commands.CommandError):
-                await ctx.send("Srake ngal tswìma' tstxoti?")
+                await ctx.send("Srake ngal tstxoti aeyawr sìmar?")
 
-# Replace token with your bots token
+# Replace token with your bot's token
 tskxekengsiyu.run("NTE5MTg4MTgxNDI2NTAzNzE4.DuhCZQ.TwZGq5zzmW4yetu6MGYqBYyOdjs")

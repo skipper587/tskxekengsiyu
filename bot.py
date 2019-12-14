@@ -223,4 +223,4 @@ async def info_error(ctx, error):
                 await ctx.send("Srake ngal tstxoti aeyawr sìmar?")
 
 # Replace token with your bot's token
-tskxekengsiyu.run("NTE5MTg4MTgxNDI2NTAzNzE4.XfQ-tA.X80iAqcjHL6uh0fLFMp2DUqAsTU")
+tskxekengsiyu.run("NTE5MTg4MTgxNDI2NTAzNzE4.XfQ_kA.WDO0F5WH_Jx6Z8OzbGLs9HB1GU4")

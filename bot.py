@@ -12,7 +12,7 @@ import os
 Tskxekengsiyu = discord.Client()  # Initialise Client
 tskxekengsiyu = commands.Bot(command_prefix="!")  # Initialize client bot
 
-versionnumber = "1.1"
+versionnumber = "1.1.1"
 modRoleNames = ["Olo'eyktan","Eyktan","frapo"]
 activeRoleNames = ["Koaktu","Tsamsiyu","Tsamsiyutsyìp","Eykyu","Ikran Makto","Taronyu","Taronyutsyìp","Numeyu","Hapxìtu","Zìma'uyu","Ketuwong"]
 activeRoleThresholds = [16384, 8192, 4096, 2048, 1024, 512, 256, 128, 64, 32, 16]
@@ -223,4 +223,4 @@ async def info_error(ctx, error):
                 await ctx.send("Srake ngal tstxoti aeyawr sìmar?")
 
 # Replace token with your bot's token
-tskxekengsiyu.run("NTE5MTg4MTgxNDI2NTAzNzE4.XfQ8oA.YZb_V_l_xbp9kg0HgWT-tJ7kR98")
+tskxekengsiyu.run("NTE5MTg4MTgxNDI2NTAzNzE4.XfQ-tA.X80iAqcjHL6uh0fLFMp2DUqAsTU")

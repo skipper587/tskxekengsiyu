@@ -4,10 +4,10 @@ import discord
 from discord.ext.commands import Bot
 from discord.ext import commands
 from discord.utils import get
+from datetime import datetime
 
 import asyncio
 import os
-import datetime
 
 Tskxekengsiyu = discord.Client()  # Initialise Client
 tskxekengsiyu = commands.Bot(command_prefix="!")  # Initialize client bot
@@ -223,4 +223,4 @@ async def info_error(ctx, error):
                 await ctx.send("Srake ngal tstxoti aeyawr sìmar?")
 
 # Replace token with your bot's token
-tskxekengsiyu.run("NTE5MTg4MTgxNDI2NTAzNzE4.DuhCZQ.TwZGq5zzmW4yetu6MGYqBYyOdjs")
+tskxekengsiyu.run("NTE5MTg4MTgxNDI2NTAzNzE4.XfQ8oA.YZb_V_l_xbp9kg0HgWT-tJ7kR98")

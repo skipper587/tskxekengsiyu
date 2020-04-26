@@ -4,15 +4,16 @@ import discord
 from discord.ext.commands import Bot
 from discord.ext import commands
 from discord.utils import get
+
 from datetime import datetime
 
 import asyncio
 import os
 
-Tskxekengsiyu = discord.Client()  # Initialise Client
+Tskxekengsiyu = discord.Client()  # Initialize Client
 tskxekengsiyu = commands.Bot(command_prefix="!")  # Initialize client bot
 
-versionnumber = "1.1.1"
+versionnumber = "1.2.0"
 modRoleNames = ["Olo'eyktan","Eyktan","frapo"]
 activeRoleNames = ["Koaktu","Tsamsiyu","Tsamsiyutsyìp","Eykyu","Ikran Makto","Taronyu","Taronyutsyìp","Numeyu","Hapxìtu","Zìma'uyu","Ketuwong"]
 activeRoleThresholds = [16384, 8192, 4096, 2048, 1024, 512, 256, 128, 64, 32, 16]
@@ -29,6 +30,9 @@ naviVocab = [
     # 0 1 2 3 4 powers of 8 last digit
     ["", "l", "", "", ""],
 ]
+
+send_time = '08:00'
+message_channel_id = 516003512316854295
 
 ## Updates roles.
 async def roleUpdate(count, check, message, user):
@@ -48,7 +52,34 @@ async def roleUpdate(count, check, message, user):
                         break
                 elif count >= activeRoleThresholds[i]:
                         break
-                i += 1          
+                i += 1
+
+async def time_check():
+        await tskxekengsiyu.wait_until_ready()
+        
+        message_channel = tskxekengsiyu.get_channel(message_channel_id)
+        bot_ready = tskxekengsiyu.is_closed()
+        
+        while not bot_ready:
+                now = datetime.strftime(datetime.now(),'%H:%M')
+                if now == send_time:
+                        dateTimeObj = datetime.now()
+                        timestampStr = dateTimeObj.strftime("%d-%m-%Y")
+                        fileName = 'qotd/' + timestampStr + '.tsk'
+                        if os.path.exists(fileName):
+                                fh = open(fileName, 'r')
+                                fileContents = fh.readlines(1)
+                                strippedContents = fileContents[0].strip("['")
+                                strippedContents = fileContents[0].strip("']")
+                                fh.close()
+                                os.remove(fileName)
+                                await message_channel.send(strippedContents)
+                                time = 90
+                        else:
+                                time = 1
+                else:
+                        time = 1
+                await asyncio.sleep(time)
 
 def reverse(s): 
     if len(s) == 0: 
@@ -90,6 +121,7 @@ def wordify(input):
 async def on_ready():
         # This will be called when the bot connects to the server.
         print("Tskxekengsiyu alaksi lu.")
+        tskxekengsiyu.loop.create_task(time_check())
 
 @tskxekengsiyu.event
 async def on_member_join(member):
@@ -152,20 +184,6 @@ async def on_message(message):
        
         await tskxekengsiyu.process_commands(message)
         
-@tskxekengsiyu.event
-async def on_message(message):
-        # Post a question of the day, if theres one available.
-        dateTimeObj = datetime.now()
-        timestampStr = dateTimeObj.strftime("%d-%m-%Y")
-        fileName = 'qotd/' + timestampStr + '.tsk'
-        
-        if os.path.exists(fileName):
-                fh = open(fileName, 'r')
-                content = fh.readlines(1)
-                fh.close()
-                await ctx.send(content)
-                fh.remove(fileName)
-        
 ## Quit command
 @tskxekengsiyu.command(name='ftang')
 async def botquit(ctx):
@@ -206,16 +224,19 @@ async def messages(ctx, user: discord.Member):
         await ctx.send(embed=embed)
 
 ## Add QOTD
-@tskxekengsiyu.command(name='ngop tìpawmit')
+@tskxekengsiyu.command(name='ngop')
 async def qotd(ctx, question, date):
-        if os.path.exists(fileName):
-                await ctx.send("Fìtìpawm mi fkeytok!")
-        else:
-                fileName = 'qotd/' + str(date) + '.tsk'
+        fileName = 'qotd/' + str(date) + '.tsk'
+        #print(fileName)
+        if not os.path.exists(fileName):
+                print("Trying to create...")
                 fh = open(fileName, "w")
                 fh.write(str(question))
                 fh.close()
+                print("Created.")
                 await ctx.send("Lu hasey.")
+        else:
+                await ctx.send("Fìtìpawm mi fkeytok!")
 
 @messages.error
 async def info_error(ctx, error):
@@ -223,4 +244,4 @@ async def info_error(ctx, error):
                 await ctx.send("Srake ngal tstxoti aeyawr sìmar?")
 
 # Replace token with your bot's token
-tskxekengsiyu.run("NTE5MTg4MTgxNDI2NTAzNzE4.XfRAsA.CRmqCJGmNiLDhqHXT1M8xiRnG84")
+tskxekengsiyu.run("private key")

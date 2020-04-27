@@ -13,8 +13,8 @@ import os
 Tskxekengsiyu = discord.Client()  # Initialize Client
 tskxekengsiyu = commands.Bot(command_prefix="!")  # Initialize client bot
 
-versionnumber = "1.2.0"
-modRoleNames = ["Olo'eyktan","Eyktan","frapo"]
+versionnumber = "1.2.1"
+modRoleNames = ["Olo'eyktan","Eyktan","Srungsiyu","frapo"]
 activeRoleNames = ["Koaktu","Tsamsiyu","Tsamsiyutsyìp","Eykyu","Ikran Makto","Taronyu","Taronyutsyìp","Numeyu","Hapxìtu","Zìma'uyu","Ketuwong"]
 activeRoleThresholds = [16384, 8192, 4096, 2048, 1024, 512, 256, 128, 64, 32, 16]
 

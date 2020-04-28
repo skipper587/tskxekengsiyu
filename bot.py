@@ -74,6 +74,7 @@ async def time_check():
                                 fh.close()
                                 os.remove(fileName)
                                 await message_channel.send(strippedContents)
+                                await message_channel.edit(topic(strippedContents),reason="Mipa tìpawm fìtrrä.")
                                 time = 90
                         else:
                                 time = 1
@@ -244,4 +245,4 @@ async def info_error(ctx, error):
                 await ctx.send("Srake ngal tstxoti aeyawr sìmar?")
 
 # Replace token with your bot's token
-tskxekengsiyu.run("private key")
+tskxekengsiyu.run("PRIVATE KEY")

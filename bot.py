@@ -13,7 +13,7 @@ import os
 Tskxekengsiyu = discord.Client()  # Initialize Client
 tskxekengsiyu = commands.Bot(command_prefix="!")  # Initialize client bot
 
-versionnumber = "1.2.1"
+versionnumber = "1.2.5"
 modRoleNames = ["Olo'eyktan","Eyktan","Srungsiyu","frapo"]
 activeRoleNames = ["Koaktu","Tsamsiyu","Tsamsiyutsyìp","Eykyu","Ikran Makto","Taronyu","Taronyutsyìp","Numeyu","Hapxìtu","Zìma'uyu","Ketuwong"]
 activeRoleThresholds = [16384, 8192, 4096, 2048, 1024, 512, 256, 128, 64, 32, 16]
@@ -32,7 +32,9 @@ naviVocab = [
 ]
 
 send_time = '08:00'
-message_channel_id = 516003512316854295
+message_channel_id = 520026091566399513
+
+monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 
 ## Updates roles.
 async def roleUpdate(count, check, message, user):
@@ -74,7 +76,16 @@ async def time_check():
                                 fh.close()
                                 os.remove(fileName)
                                 await message_channel.send(strippedContents)
-                                await message_channel.edit(topic(strippedContents),reason="Mipa tìpawm fìtrrä.")
+                                await message_channel.edit(topic=strippedContents,reason="Mipa tìpawm fìtrrä.")
+
+                                fh = open('qotd/calendar.tsk','r')
+                                fileContents = fh.read()
+                                fh.close()
+                                removeDate = fileContents.replace("\n" + timestampStr,'')
+                                fh = open('qotd/calendar.tsk','w')
+                                fh.write(removeDate)
+                                fh.close()
+                                
                                 time = 90
                         else:
                                 time = 1
@@ -117,6 +128,67 @@ def wordify(input):
                 output = output.replace("mm", "m")
                 output += "a"
                 return output
+
+def nextAvailableDate(date):
+        dateTimeObj = datetime.now()
+        today = dateTimeObj.strftime("%d-%m-%Y")
+        todayDate = today
+        
+        day = int(todayDate[0:2])
+        month = int(todayDate[3:5])
+        year = int(todayDate[-4:])
+
+        fileName = 'qotd/' + str(date) + '.tsk'
+        modDate = todayDate
+        
+        while os.path.exists(fileName) == True:
+                if day <= 8:
+                        day = day + 1
+                        day = "0" + str(day)
+                elif day < 28:
+                        day = day + 1
+                elif day == 28:
+                        thisMonthDays = monthDays[month - 1]
+                        if day == thisMonthDays:
+                                day = "01"
+                                month = month + 1
+                                if month < 10:
+                                        month = "0" + str(month)
+                        else:
+                                day = day + 1
+                elif day < 30:
+                        day = day + 1
+                        
+                        fileName = 'qotd/' + modDate + '.tsk'
+                elif day == 30:
+                        thisMonthDays = monthDays[month - 1]
+                        if day == thisMonthDays:
+                                day = "01"
+                                month = month + 1
+                                if month < 10:
+                                        month = "0" + str(month)
+                        else:
+                                day = day + 1
+                elif day == 31:
+                        day = "01"
+                        if month < 10:
+                                month = month + 1
+                                month = "0" + str(month)
+                        elif month > 10 and not month == 12:
+                                month = month + 1
+                        elif month == 12:
+                                month = "01"
+                                year = year + 1
+                if int(month) < 10:
+                        month = str(month).strip("0")
+                        month = "0" + str(month)
+                
+                modDate = str(day) + "-" + str(month) + "-" + str(year)
+                fileName = 'qotd/' + modDate + '.tsk'
+                
+                day = int(day)
+                month = int(month)
+        return modDate
 
 @tskxekengsiyu.event
 async def on_ready():
@@ -226,18 +298,109 @@ async def messages(ctx, user: discord.Member):
 
 ## Add QOTD
 @tskxekengsiyu.command(name='ngop')
-async def qotd(ctx, question, date):
-        fileName = 'qotd/' + str(date) + '.tsk'
-        #print(fileName)
-        if not os.path.exists(fileName):
-                print("Trying to create...")
+async def qotd(ctx, question, *date):
+        if date:
+                date = str(date).strip("(),' ")
+
+                fileName = 'qotd/' + str(date) + '.tsk'
+        else:
+                dateTimeObj = datetime.now()
+                today = dateTimeObj.strftime("%d-%m-%Y")
+                todayDate = today
+
+                date = nextAvailableDate(todayDate)
+
+                fileName = 'qotd/' + str(date) + '.tsk'
+                
+        if not os.path.exists(fileName):        
                 fh = open(fileName, "w")
                 fh.write(str(question))
                 fh.close()
-                print("Created.")
-                await ctx.send("Lu hasey.")
+                
+                print("Created question of the day for " + str(date) + ".")
+                
+                fh = open('qotd/calendar.tsk', 'a')
+                fh.write("\n" + str(date))
+                fh.close()
+                
+                await ctx.send("Ngolop.")
         else:
-                await ctx.send("Fìtìpawm mi fkeytok!")
+                modDate = nextAvailableDate(date)
+                await ctx.send("Fìtìpawm mi fkeytok! Haya trr a fkol tsun ngivop tìpawmit lu " + modDate + ".")
+
+## Next Available Date
+@tskxekengsiyu.command(name='haya trr')
+async def nextDay(ctx):
+        dateTimeObj = datetime.now()
+        today = dateTimeObj.strftime("%d-%m-%Y")
+        todayDate = today
+        
+        answer = nextAvailableDate(todayDate)
+
+        await ctx.send("Haya trr a fkol tsun ngivop tìpawmit lu " + answer + ".")
+
+## Check the schedule
+@tskxekengsiyu.command(name='srr')
+async def checkDates(ctx):
+        fileName = 'qotd/calendar.tsk'
+        fileSize = os.path.getsize(fileName)
+        
+        if os.path.exists(fileName) and not fileSize == 0:
+                fh = open(fileName, 'r')
+                contents = fh.read()
+                fh.close()
+                await ctx.send(contents)
+        else:
+                await ctx.send("Kea srrur ke lu sìpawm.")
+
+## View a specific question
+@tskxekengsiyu.command(name='inan')
+async def readQuestion(ctx, date):
+        fileName = 'qotd/' + str(date) + '.tsk'
+        
+        if os.path.exists(fileName):
+                fh = open(fileName, 'r')
+                contents = fh.read()
+                fh.close()
+                
+                await ctx.send("Tsatìpawm lu \"" + contents + "\"")
+        else:
+                await ctx.send("Kea tìpawm ke fkeytok mì satrr.")
+
+## Change a specific qotd
+@tskxekengsiyu.command(name='latem')
+async def changeQuestion(ctx, question, date):
+        fileName = 'qotd/' + str(date) + '.tsk'
+        
+        if os.path.exists(fileName):
+                fh = open(fileName, 'w')
+                fh.write(question)
+                fh.close()
+                
+                await ctx.send("Lolatem.")
+        else:
+                await ctx.send("Kea tìpawm mi ke fkeytok mì satrr.")
+
+## Delete a specific question
+@tskxekengsiyu.command(name='ska\'a')
+async def deleteQuestion(ctx, date):
+        fileName = 'qotd/' + str(date) + '.tsk'
+        if os.path.exists(fileName):
+                os.remove(fileName)
+                
+                fh = open('qotd/calendar.tsk','r')
+                fileContents = fh.read()
+                fh.close()
+                
+                removeDate = fileContents.replace("\n" + str(date),'')
+                
+                fh = open('qotd/calendar.tsk','w')
+                fh.write(removeDate)
+                fh.close()
+                
+                await ctx.send("Skola'a.")
+        else:
+                await ctx.send("Kea tìpawm mi ke fkeytok mì satrr.")   
 
 @messages.error
 async def info_error(ctx, error):

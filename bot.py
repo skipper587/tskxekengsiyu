@@ -329,7 +329,7 @@ async def qotd(ctx, question, *date):
                 await ctx.send("Fìtìpawm mi fkeytok! Haya trr a fkol tsun ngivop tìpawmit lu " + modDate + ".")
 
 ## Next Available Date
-@tskxekengsiyu.command(name='haya trr')
+@tskxekengsiyu.command(name='hayatrr')
 async def nextDay(ctx):
         dateTimeObj = datetime.now()
         today = dateTimeObj.strftime("%d-%m-%Y")

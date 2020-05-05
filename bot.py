@@ -10,10 +10,12 @@ from datetime import datetime
 import asyncio
 import os
 
+##--------------------Global Variables--------------------##
+
 Tskxekengsiyu = discord.Client()  # Initialize Client
 tskxekengsiyu = commands.Bot(command_prefix="!")  # Initialize client bot
 
-versionnumber = "1.2.5"
+versionnumber = "1.2.6"
 modRoleNames = ["Olo'eyktan","Eyktan","Srungsiyu","frapo"]
 activeRoleNames = ["Koaktu","Tsamsiyu","Tsamsiyutsyìp","Eykyu","Ikran Makto","Taronyu","Taronyutsyìp","Numeyu","Hapxìtu","Zìma'uyu","Ketuwong"]
 activeRoleThresholds = [16384, 8192, 4096, 2048, 1024, 512, 256, 128, 64, 32, 16]
@@ -32,9 +34,11 @@ naviVocab = [
 ]
 
 send_time = '08:00'
-message_channel_id = 520026091566399513
-
+message_channel_id = 516003512316854295
+            #Ja, Fe, Ma, Ap, Ma, Ju, Jl, Au, Se, Oc, No, De
 monthDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+
+##--------------------Global Functions--------------------##
 
 ## Updates roles.
 async def roleUpdate(count, check, message, user):
@@ -56,6 +60,7 @@ async def roleUpdate(count, check, message, user):
                         break
                 i += 1
 
+## System time check to know when to post a Question of the Day, if available.
 async def time_check():
         await tskxekengsiyu.wait_until_ready()
         
@@ -99,6 +104,7 @@ def reverse(s):
     else: 
         return reverse(s[1:]) + s[0] 
 
+## English - Na'vi numberical conversion courtesy of Tirea Aean.
 def wordify(input):
         rev = reverse(input)
         output = ""
@@ -129,6 +135,7 @@ def wordify(input):
                 output += "a"
                 return output
 
+## Function for finding the next available date relative to the current date.
 def nextAvailableDate(date):
         dateTimeObj = datetime.now()
         today = dateTimeObj.strftime("%d-%m-%Y")
@@ -139,14 +146,16 @@ def nextAvailableDate(date):
         year = int(todayDate[-4:])
 
         fileName = 'qotd/' + str(date) + '.tsk'
-        modDate = todayDate
+        modDate = todayDate # This is included in case no date is passed to the function and no qotds exist
         
         while os.path.exists(fileName) == True:
+                # Manages Output for single-digit days due to int()
                 if day <= 8:
                         day = day + 1
                         day = "0" + str(day)
                 elif day < 28:
                         day = day + 1
+                # If February, updates to the next month at 28 days.
                 elif day == 28:
                         thisMonthDays = monthDays[month - 1]
                         if day == thisMonthDays:
@@ -160,6 +169,7 @@ def nextAvailableDate(date):
                         day = day + 1
                         
                         fileName = 'qotd/' + modDate + '.tsk'
+                # If September, April, June or November, updates to the next month at 30 days.
                 elif day == 30:
                         thisMonthDays = monthDays[month - 1]
                         if day == thisMonthDays:
@@ -169,6 +179,7 @@ def nextAvailableDate(date):
                                         month = "0" + str(month)
                         else:
                                 day = day + 1
+                # Updates to the next month at 31 days.
                 elif day == 31:
                         day = "01"
                         if month < 10:
@@ -189,6 +200,8 @@ def nextAvailableDate(date):
                 day = int(day)
                 month = int(month)
         return modDate
+
+##-----------------------Bot Functions--------------------##
 
 @tskxekengsiyu.event
 async def on_ready():
@@ -257,7 +270,7 @@ async def on_message(message):
        
         await tskxekengsiyu.process_commands(message)
         
-## Quit command
+## Kill Command
 @tskxekengsiyu.command(name='ftang')
 async def botquit(ctx):
         user = ctx.message.author
@@ -273,7 +286,7 @@ async def version(ctx):
         displayversion = ["Srey: ", versionnumber]
         await ctx.send(''.join(displayversion))
 
-## User message count
+## Display User Message Count
 @tskxekengsiyu.command(name='yì')
 async def messages(ctx, user: discord.Member):
         fileName = 'users/' + str(user.id) + '.tsk'
@@ -296,7 +309,7 @@ async def messages(ctx, user: discord.Member):
         embed.set_thumbnail(url=user.avatar_url)
         await ctx.send(embed=embed)
 
-## Add QOTD
+## Add a Question of the Day to a specified or the next available date
 @tskxekengsiyu.command(name='ngop')
 async def qotd(ctx, question, *date):
         if date:
@@ -328,7 +341,7 @@ async def qotd(ctx, question, *date):
                 modDate = nextAvailableDate(date)
                 await ctx.send("Fìtìpawm mi fkeytok! Haya trr a fkol tsun ngivop tìpawmit lu " + modDate + ".")
 
-## Next Available Date
+## Retrieve the next Available Date for a Question of the Day
 @tskxekengsiyu.command(name='hayatrr')
 async def nextDay(ctx):
         dateTimeObj = datetime.now()
@@ -339,7 +352,7 @@ async def nextDay(ctx):
 
         await ctx.send("Haya trr a fkol tsun ngivop tìpawmit lu " + answer + ".")
 
-## Check the schedule
+## Check the Scheduled Dates for Questions of the Day
 @tskxekengsiyu.command(name='srr')
 async def checkDates(ctx):
         fileName = 'qotd/calendar.tsk'
@@ -353,7 +366,7 @@ async def checkDates(ctx):
         else:
                 await ctx.send("Kea srrur ke lu sìpawm.")
 
-## View a specific question
+## View a specific Question of the Day
 @tskxekengsiyu.command(name='inan')
 async def readQuestion(ctx, date):
         fileName = 'qotd/' + str(date) + '.tsk'
@@ -367,7 +380,7 @@ async def readQuestion(ctx, date):
         else:
                 await ctx.send("Kea tìpawm ke fkeytok mì satrr.")
 
-## Change a specific qotd
+## Change a specific Question of the Day
 @tskxekengsiyu.command(name='latem')
 async def changeQuestion(ctx, question, date):
         fileName = 'qotd/' + str(date) + '.tsk'
@@ -379,9 +392,9 @@ async def changeQuestion(ctx, question, date):
                 
                 await ctx.send("Lolatem.")
         else:
-                await ctx.send("Kea tìpawm mi ke fkeytok mì satrr.")
+                await ctx.send("Kea tìpawm ke fkeytok mì satrr.")
 
-## Delete a specific question
+## Delete a specific Question of the Day
 @tskxekengsiyu.command(name='ska\'a')
 async def deleteQuestion(ctx, date):
         fileName = 'qotd/' + str(date) + '.tsk'
